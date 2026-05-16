@@ -55,6 +55,7 @@ class PatientOut(BaseModel):
 class HistoryOut(BaseModel):
     id: int
     image_url: str
+    gradcam_url: str
     eye_side: str
     created_at: datetime
 
