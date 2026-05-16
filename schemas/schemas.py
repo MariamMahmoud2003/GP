@@ -104,6 +104,7 @@ class DoctorProfile(BaseModel):
     full_name: str
     email: str
     number_of_patients: int
+    number_of_scans: int
 
     department: Optional[str]
     role: Optional[str]
