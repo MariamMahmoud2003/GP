@@ -21,7 +21,7 @@ class Doctor(Base):
     license_number = Column(String)
     role = Column(String)
     experience_years = Column(Integer)
-    rating = Column(Integer, default=0)
+    rating = Column(Integer, default=0)  #
     scans = Column(String, nullable=True)
     history = relationship("History", back_populates="doctor")
 
@@ -43,6 +43,7 @@ class History(Base):
 
     disease = Column(String)
     confidence = Column(Float)
+    percentage = Column(Integer)
 
     # doctor relation
     doctor_id = Column(Integer, ForeignKey("doctors.id"))
