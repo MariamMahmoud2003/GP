@@ -76,7 +76,7 @@ def generate_report(
         Paragraph(f"Gender: {patient.gender}", styles["Normal"]),
         Spacer(1, 12),
         Paragraph(f"Disease: {history.disease}", styles["Normal"]),
-        Paragraph(f"Confidence: {history.confidence:.2%}", styles["Normal"]),  # Optional: Format as percentage
+        Paragraph(f"Confidence: {history.percentage}%", styles["Normal"]),
         Paragraph(f"Eye Side: {history.eye_side}", styles["Normal"]),
         Spacer(1, 12)
     ]
