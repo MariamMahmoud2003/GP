@@ -95,10 +95,12 @@ class DoctorResponse(BaseModel):
 class DoctorProfile(BaseModel):
     id: int
     username: str
+    full_name: str
     email: str
-    image: Optional[str]
 
-    history: List[HistoryOut] = []
+    role: Optional[str]
+    experience_years: Optional[int]
+    scans: Optional[str]
 
     class Config:
         from_attributes = True
@@ -108,3 +110,4 @@ class DoctorProfile(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
+
