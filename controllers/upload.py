@@ -128,6 +128,7 @@ def upload_history(
 
         disease=disease,
         confidence=confidence,
+        percentage=int(confidence * 100),
 
         # which eye
         eye_side=eye_side,
@@ -143,7 +144,7 @@ def upload_history(
     return {
         "status": "success",
         "diagnosis": disease,
-        "confidence": confidence,
+        "confidence": int(confidence * 100),
         "history_id": history.id,
         "gradcam_url": gradcam_path
     }
