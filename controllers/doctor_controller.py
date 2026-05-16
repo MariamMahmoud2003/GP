@@ -59,8 +59,15 @@ def get_profile(
         .count()
     )
 
+    total_history_count = (
+        db.query(models.History.id)
+        .filter(models.History.doctor_id == current_user.id)
+        .count()
+    )
+
     # Attach this value to our current_user object so Pydantic can read it
     current_user.number_of_patients = unique_patients_count
+    current_user.number_of_scans = total_history_count
 
     return current_user
 
@@ -99,34 +106,6 @@ def get_patient(
         )
 
     return patient
-
-
-# @router.get("/patients/search", response_model=List[schemas.PatientOut])
-# def search_patient_by_name(
-#     name: str,
-#     db: Session = Depends(get_db),
-#     current_user: models.Doctor = Depends(get_current_user)
-# ):
-#     # We use .ilike(f"%{name}%") for a case-insensitive search
-#     # Example: searching "john" will find "John Doe", "johnny", etc.
-#     patients = (
-#         db.query(models.Patient)
-#         .join(models.History)
-#         .filter(
-#             models.Patient.name.ilike(f"%{name}%"),
-#             models.History.doctor_id == current_user.id
-#         )
-#         .distinct() # Ensures the same patient isn't duplicated if they have multiple histories
-#         .all()
-#     )
-#
-#     if not patients:
-#         raise HTTPException(
-#             status_code=404,
-#             detail="No patients found with that name under your care"
-#         )
-#
-#     return patients
 
 
 @router.get("/patients", response_model=list[schemas.PatientOut])
