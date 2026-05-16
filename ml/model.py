@@ -2,6 +2,7 @@ from tensorflow.keras.models import load_model
 import numpy as np
 import cv2
 import os
+import tensorflow as tf
 
 # ---------------- LOAD MODEL ----------------
 
@@ -12,20 +13,25 @@ MODEL_PATH = os.path.join(
     "best_model_6cls with_default_spliting.keras"
 )
 
-model = load_model(MODEL_PATH)
+model = load_model(MODEL_PATH, compile=False)
+
+# Explicitly build the model with the expected input shape
+model.build((None, 256, 256, 1))
+
+# This "dummy call" is good practice, keep it!
+_ = model(tf.zeros((1, 256, 256, 1)))
 
 
 # ---------------- PREPROCESS ----------------
 
 def preprocess_image(image_path):
-
     img = cv2.imread(image_path)
 
     if img is None:
         raise ValueError("Invalid image path")
 
+    img = cv2.resize(img, (256, 256))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = cv2.resize(img, (224, 224))
     img = img.astype("float32") / 255.0
 
     img = np.expand_dims(img, axis=-1)
@@ -37,7 +43,6 @@ def preprocess_image(image_path):
 # ---------------- PREDICTION ----------------
 
 def predict_oct(image_path):
-
     img = preprocess_image(image_path)
 
     prediction = model.predict(img)
@@ -59,3 +64,4 @@ def predict_oct(image_path):
     disease = classes[class_index]
 
     return disease, confidence
+
