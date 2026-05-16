@@ -61,18 +61,33 @@ def generate_report(
 
     file_path = os.path.join("reports", f"report_{history.id}.pdf")
 
-    doc = SimpleDocTemplate(file_path)
+    doc = SimpleDocTemplate(file_path, topMargin=35, bottomMargin=35)
     styles = getSampleStyleSheet()
-    content = [Paragraph("Medical Report", styles["Title"]), Spacer(1, 12),
-               Paragraph(f"Patient Name: {patient.name}", styles["Normal"]),
-               Paragraph(f"Age: {patient.age}", styles["Normal"]),
-               Paragraph(f"Gender: {patient.gender}", styles["Normal"]), Spacer(1, 12),
-               Paragraph(f"Disease: {history.disease}", styles["Normal"]),
-               Paragraph(f"Confidence: {history.confidence}", styles["Normal"]),
-               Paragraph(f"Eye Side: {history.eye_side}", styles["Normal"]), Spacer(1, 12)]
-
+    content = [
+        Paragraph("Medical Report", styles["Title"]),
+        Spacer(1, 12),
+        Paragraph(f"Patient Name: {patient.name}", styles["Normal"]),
+        Paragraph(f"Age: {patient.age}", styles["Normal"]),
+        Paragraph(f"Gender: {patient.gender}", styles["Normal"]),
+        Spacer(1, 12),
+        Paragraph(f"Disease: {history.disease}", styles["Normal"]),
+        Paragraph(f"Confidence: {history.confidence:.2%}", styles["Normal"]),  # Optional: Format as percentage
+        Paragraph(f"Eye Side: {history.eye_side}", styles["Normal"]),
+        Spacer(1, 12)
+    ]
     if history.image_url and os.path.exists(history.image_url):
-        content.append(Image(history.image_url, width=200, height=200))
+        content.append(Paragraph("Original Image", styles["Heading2"]))
+        img = Image(history.image_url, width=220, height=200)
+        img.hAlign = 'CENTER'  # Centers the image
+        content.append(img)
+
+    if history.gradcam_url and os.path.exists(history.gradcam_url):
+        content.append(Spacer(1, 12))
+        content.append(Paragraph("AI Explanation (Grad-CAM)", styles["Heading2"]))
+
+        grad_img = Image(history.gradcam_url, width=220, height=200)
+        grad_img.hAlign = 'CENTER'  # Centers the image
+        content.append(grad_img)
 
     doc.build(content)
 
