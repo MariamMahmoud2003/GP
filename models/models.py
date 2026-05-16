@@ -33,6 +33,7 @@ class History(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     image_url = Column(String)
+    gradcam_url = Column(String, nullable=True)
     created_at = Column(
         DateTime,
         default=datetime.datetime.utcnow
