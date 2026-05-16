@@ -5,7 +5,7 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session
 
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table
 from reportlab.lib.styles import getSampleStyleSheet
 
 import os
@@ -63,8 +63,13 @@ def generate_report(
 
     doc = SimpleDocTemplate(file_path, topMargin=35, bottomMargin=35)
     styles = getSampleStyleSheet()
+
+    title_text = '<font color="#003366">Medical Report</font>'
+    original_title_text = '<font color="#006699">Original Image</font>'
+    gradcam_title_text = '<font color="#D32F2F">AI Explanation (Grad-CAM)</font>'
+
     content = [
-        Paragraph("Medical Report", styles["Title"]),
+        Paragraph(title_text, styles["Title"]),
         Spacer(1, 12),
         Paragraph(f"Patient Name: {patient.name}", styles["Normal"]),
         Paragraph(f"Age: {patient.age}", styles["Normal"]),
@@ -75,19 +80,34 @@ def generate_report(
         Paragraph(f"Eye Side: {history.eye_side}", styles["Normal"]),
         Spacer(1, 12)
     ]
+
+    image_row = []
+
     if history.image_url and os.path.exists(history.image_url):
-        content.append(Paragraph("Original Image", styles["Heading2"]))
-        img = Image(history.image_url, width=220, height=200)
-        img.hAlign = 'CENTER'  # Centers the image
-        content.append(img)
+        left_col = [
+            Paragraph(original_title_text, styles["Heading2"]),
+            Spacer(1, 6),
+            Image(history.image_url, width=210, height=190)
+        ]
+        image_row.append(left_col)
+    else:
+        image_row.append("")
 
     if history.gradcam_url and os.path.exists(history.gradcam_url):
-        content.append(Spacer(1, 12))
-        content.append(Paragraph("AI Explanation (Grad-CAM)", styles["Heading2"]))
+        right_col = [
+            Paragraph(gradcam_title_text, styles["Heading2"]),
+            Spacer(1, 6),
+            Image(history.gradcam_url, width=210, height=190)
+        ]
+        image_row.append(right_col)
+    else:
+        image_row.append("")
 
-        grad_img = Image(history.gradcam_url, width=220, height=200)
-        grad_img.hAlign = 'CENTER'  # Centers the image
-        content.append(grad_img)
+    if history.image_url or history.gradcam_url:
+        # 460 total width splits perfectly onto an A4 page (230 width per column)
+        img_table = Table([image_row], colWidths=[230, 230])
+        img_table.hAlign = 'CENTER'
+        content.append(img_table)
 
     doc.build(content)
 
