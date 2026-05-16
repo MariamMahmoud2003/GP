@@ -50,6 +50,14 @@ class PatientOut(BaseModel):
         from_attributes = True
 
 
+class HistoryPatientOut(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
 # ---------------- HISTORY ----------------
 
 class HistoryOut(BaseModel):
@@ -62,8 +70,7 @@ class HistoryOut(BaseModel):
     disease: str
     confidence: float
 
-    patient: PatientOut
-    doctor: DoctorMini
+    patient: HistoryPatientOut
 
     class Config:
         from_attributes = True
@@ -93,11 +100,12 @@ class DoctorResponse(BaseModel):
 # ---------------- PROFILE RESPONSE ----------------
 
 class DoctorProfile(BaseModel):
-    id: int
     username: str
     full_name: str
     email: str
+    number_of_patients: int
 
+    department: Optional[str]
     role: Optional[str]
     experience_years: Optional[int]
     scans: Optional[str]
@@ -110,4 +118,3 @@ class DoctorProfile(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
-
